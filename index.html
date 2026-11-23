@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DogSearch</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%231a73e8'/%3E%3Cellipse cx='17' cy='26' rx='6' ry='13' transform='rotate(-14 17 26)' fill='%23ffffff'/%3E%3Cellipse cx='47' cy='26' rx='6' ry='13' transform='rotate(14 47 26)' fill='%23ffffff'/%3E%3Ccircle cx='32' cy='34' r='15' fill='%23ffffff'/%3E%3Ccircle cx='27' cy='31' r='2.4' fill='%23202124'/%3E%3Ccircle cx='37' cy='31' r='2.4' fill='%23202124'/%3E%3Cellipse cx='32' cy='37' rx='4' ry='2.8' fill='%23202124'/%3E%3C/svg%3E" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #ffffff;
+      color: #202124;
+      overflow-x: hidden;
+    }
+    body.reader-lock {
+      overflow: hidden;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade {
+      animation: fadeIn 0.2s ease-out forwards;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-white text-[#202124]">
+  <!-- Top bar -->
+  <header class="w-full border-b border-[#dadce0] bg-white sticky top-0 z-30">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
+      <button
+        id="brandHomeBtn"
+        type="button"
+        class="flex items-center gap-2.5 text-left cursor-pointer focus:outline-none"
+      >
+        <span class="w-8 h-8 rounded-full bg-[#1a73e8] text-white flex items-center justify-center font-bold text-sm shadow-sm">
+          D
+        </span>
+        <span class="text-lg font-bold tracking-tight text-[#202124]">
+          Dog<span class="text-[#1a73e8]">Search</span>
+        </span>
+      </button>
+
+      <div class="flex items-center gap-2">
+        <button
+          id="openDogAiTopBtn"
+          type="button"
+          class="px-3.5 py-1.5 rounded-full bg-[#e8f0fe] hover:bg-[#d2e3fc] text-[#1967d2] text-xs sm:text-sm font-medium transition cursor-pointer"
+        >
+          Dog AI
+        </button>
+        <button
+          id="openMapsTopBtn"
+          type="button"
+          class="px-3.5 py-1.5 rounded-full bg-[#f8f9fa] hover:bg-[#f1f3f4] text-[#3c4043] border border-[#dadce0] text-xs sm:text-sm font-medium transition cursor-pointer"
+        >
+          World Maps
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1 w-full">
+    <!-- START MENU VIEW -->
+    <section
+      id="startMenuView"
+      class="max-w-3xl mx-auto px-4 sm:px-6 pt-12 pb-16 flex flex-col items-center text-center animate-fade"
+    >
+      <div class="mb-6 flex flex-col items-center gap-2">
+        <span class="px-3 py-1 rounded-full bg-[#f1f3f4] text-[#5f6368] text-xs font-medium">
+          Dog AI Default • Worldwide Maps • Infinite Scroll • dogsearch://read:
+        </span>
+        <h1 class="text-4xl sm:text-5xl font-bold tracking-tight text-[#202124]">
+          Dog<span class="text-[#1a73e8]">Search</span>
+        </h1>
+        <p class="text-sm sm:text-base text-[#5f6368] max-w-xl">
+          Search across expanded databases, explore worldwide Google Maps, or launch full-view Dog AI.
+        </p>
+      </div>
+
+      <form id="homeSearchForm" class="w-full max-w-2xl mb-6">
+        <div class="flex items-center w-full rounded-full border border-[#dadce0] hover:shadow-md focus-within:shadow-md focus-within:border-[#1a73e8] bg-white px-4 py-2.5 transition">
+          <input
+            id="homeSearchInput"
+            type="text"
+            placeholder="Ask Dog AI or search anything in the world..."
+            aria-label="Search DogSearch"
+            class="flex-1 bg-transparent text-sm sm:text-base text-[#202124] placeholder-[#5f6368] focus:outline-none px-2"
+          />
+          <button
+            type="submit"
+            class="px-4 py-2 rounded-full bg-[#1a73e8] hover:bg-[#1765cc] text-white text-sm font-medium transition cursor-pointer"
+          >
+            Search
+          </button>
+        </div>
+      </form>
+
+      <div class="flex flex-wrap items-center justify-center gap-3 mb-8">
+        <button
+          id="startDogAiBtn"
+          type="button"
+          class="px-5 py-2.5 rounded-lg bg-[#1a73e8] hover:bg-[#1765cc] text-white text-sm font-semibold shadow-sm transition cursor-pointer"
+        >
+          Dog AI (Full View)
+        </button>
+        <button
+          id="feelingLuckyBtn"
+          type="button"
+          class="px-5 py-2.5 rounded-lg bg-[#f8f9fa] hover:bg-[#f1f3f4] text-[#3c4043] border border-[#dadce0] text-sm font-medium transition cursor-pointer"
+        >
+          Explore World Maps
+        </button>
+      </div>
+
+      <div id="homeTrendingChips" class="flex flex-wrap items-center justify-center gap-2 max-w-2xl"></div>
+    </section>
+
+    <!-- RESULTS WORKSPACE VIEW -->
+    <section
+      id="resultsView"
+      class="hidden max-w-6xl mx-auto px-4 sm:px-6 py-6 space-y-6 animate-fade"
+    >
+      <form id="resultsSearchForm" class="max-w-2xl">
+        <div class="flex items-center w-full rounded-full border border-[#dadce0] focus-within:border-[#1a73e8] bg-white px-4 py-2 shadow-sm">
+          <input
+            id="resultsSearchInput"
+            type="text"
+            placeholder="Search DogSearch..."
+            aria-label="Search query"
+            class="flex-1 bg-transparent text-sm sm:text-base text-[#202124] placeholder-[#5f6368] focus:outline-none px-2"
+          />
+          <button
+            type="submit"
+            class="px-4 py-1.5 rounded-full bg-[#1a73e8] hover:bg-[#1765cc] text-white text-sm font-medium transition cursor-pointer"
+          >
+            Search
+          </button>
+        </div>
+      </form>
+
+      <!-- Mode Tabs (Dog AI Default) -->
+      <div class="flex flex-wrap items-center gap-2 border-b border-[#dadce0] pb-3">
+        <button
+          id="tabDogAi"
+          type="button"
+          class="px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold bg-[#e8f0fe] text-[#1967d2] cursor-pointer"
+        >
+          Dog AI
+        </button>
+        <button
+          id="tabAll"
+          type="button"
+          class="px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium text-[#5f6368] hover:bg-[#f1f3f4] cursor-pointer"
+        >
+          All Results
+        </button>
+        <button
+          id="tabMaps"
+          type="button"
+          class="px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium text-[#5f6368] hover:bg-[#f1f3f4] cursor-pointer"
+        >
+          World Maps
+        </button>
+      </div>
+
+      <!-- Dog AI Answer Panel -->
+      <div
+        id="dogAiAnswerCard"
+        class="rounded-2xl border border-[#d2e3fc] bg-[#f8fafe] p-5 space-y-3"
+      >
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div class="flex items-center gap-2">
+            <span class="px-2.5 py-0.5 rounded-full bg-[#1a73e8] text-white text-xs font-semibold">
+              Dog AI
+            </span>
+            <span id="dogAiProtocolLabel" class="text-xs font-mono text-[#5f6368]"></span>
+          </div>
+          <div class="flex items-center gap-2">
+            <button
+              id="openDogAiFullFromCardBtn"
+              type="button"
+              class="text-xs font-medium text-[#1a73e8] hover:underline cursor-pointer"
+            >
+              Open Full Dog AI
+            </button>
+            <button
+              id="readAiInReaderBtn"
+              type="button"
+              class="px-3 py-1 rounded-full bg-white border border-[#dadce0] hover:bg-[#f1f3f4] text-xs font-medium text-[#202124] cursor-pointer"
+            >
+              dogsearch://read:
+            </button>
+          </div>
+        </div>
+        <div id="dogAiLoading" class="hidden items-center gap-2 text-xs text-[#5f6368]">
+          <span class="w-2 h-2 rounded-full bg-[#1a73e8] animate-ping"></span>
+          <span>Generating Dog AI answer...</span>
+        </div>
+        <div id="dogAiAnswerText" class="text-sm sm:text-base leading-relaxed text-[#202124] whitespace-pre-line"></div>
+      </div>
+
+      <!-- Worldwide Google Maps Panel -->
+      <div
+        id="worldMapsPanel"
+        class="hidden rounded-2xl border border-[#dadce0] bg-white p-5 space-y-4"
+      >
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h2 class="text-lg font-bold text-[#202124]">Worldwide Google Maps</h2>
+            <p id="mapsSubtitle" class="text-xs text-[#5f6368]">Exploring locations worldwide</p>
+          </div>
+          <a
+            id="externalGoogleMapsLink"
+            href="https://www.google.com/maps/search/?api=1&query=World"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="px-3.5 py-1.5 rounded-lg bg-[#1a73e8] hover:bg-[#1765cc] text-white text-xs font-medium transition"
+          >
+            Open in Google Maps ↗
+          </a>
+        </div>
+
+        <div class="w-full h-72 sm:h-80 rounded-xl overflow-hidden border border-[#dadce0] bg-[#f8f9fa]">
+          <iframe
+            id="googleMapsIframe"
+            title="Google Maps World View"
+            src="https://www.google.com/maps?q=World&output=embed"
+            class="w-full h-full border-0"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+          ></iframe>
+        </div>
+
+        <div id="worldLandmarksGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+      </div>
+
+      <!-- Expanded Database Feed + Infinite Scroll -->
+      <div id="databaseResultsSection" class="space-y-4">
+        <div class="flex items-center justify-between">
+          <p id="resultsMetaLabel" class="text-xs text-[#5f6368]"></p>
+          <span class="text-xs text-[#5f6368]">Scroll down for more results</span>
+        </div>
+
+        <div id="resultsList" class="space-y-3"></div>
+
+        <div class="pt-2 flex flex-col items-center gap-2">
+          <button
+            id="loadMoreResultsBtn"
+            type="button"
+            class="px-5 py-2 rounded-full bg-[#f8f9fa] hover:bg-[#f1f3f4] text-[#202124] border border-[#dadce0] text-sm font-medium transition cursor-pointer"
+          >
+            Fetch More Results
+          </button>
+          <div id="infiniteScrollSentinel" class="h-4 w-full"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FULL-VIEW DOG AI MODE -->
+    <section
+      id="fullDogAiView"
+      class="hidden max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-5 animate-fade"
+    >
+      <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-[#dadce0]">
+        <div class="flex items-center gap-2.5">
+          <span class="px-3 py-1 rounded-full bg-[#e8f0fe] text-[#1967d2] text-xs font-semibold">
+            Dog AI • Full View
+          </span>
+          <h2 class="text-xl sm:text-2xl font-bold text-[#202124]">Dog AI Assistant</h2>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <input
+            id="standaloneApiKeyInput"
+            type="password"
+            autocomplete="off"
+            placeholder="Gemini API key (optional standalone)"
+            aria-label="Gemini API key"
+            class="px-3 py-1.5 rounded-lg border border-[#dadce0] bg-white text-xs text-[#202124] placeholder-[#5f6368] focus:outline-none focus:border-[#1a73e8]"
+          />
+          <button
+            id="backToSearchFromAiBtn"
+            type="button"
+            class="px-4 py-1.5 rounded-lg bg-[#f8f9fa] hover:bg-[#f1f3f4] text-[#3c4043] border border-[#dadce0] text-xs sm:text-sm font-medium transition cursor-pointer"
+          >
+            Back to Search
+          </button>
+        </div>
+      </div>
+
+      <div
+        id="fullAiChatLog"
+        class="rounded-2xl border border-[#dadce0] bg-[#f8f9fa] p-4 sm:p-6 min-h-[280px] max-h-[55vh] overflow-y-auto space-y-3"
+      ></div>
+
+      <form id="fullAiForm" class="flex items-center gap-2">
+        <input
+          id="fullAiPromptInput"
+          type="text"
+          placeholder="Ask Dog AI anything..."
+          aria-label="Ask Dog AI"
+          class="flex-1 px-4 py-3 rounded-xl border border-[#dadce0] bg-white text-sm text-[#202124] placeholder-[#5f6368] focus:outline-none focus:border-[#1a73e8]"
+        />
+        <button
+          type="submit"
+          class="px-5 py-3 rounded-xl bg-[#1a73e8] hover:bg-[#1765cc] text-white text-sm font-semibold transition cursor-pointer"
+        >
+          Send
+        </button>
+      </form>
+    </section>
+
+    <!-- BUILT-IN PLAINTEXT READER (dogsearch://read:) -->
+    <section
+      id="plaintextReaderOverlay"
+      class="hidden fixed inset-0 z-50 bg-white overflow-y-auto px-4 sm:px-8 py-8"
+    >
+      <div class="max-w-3xl mx-auto space-y-6">
+        <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-[#dadce0]">
+          <span id="readerUriBadge" class="text-xs font-mono text-[#5f6368] break-all"></span>
+          <button
+            id="closeReaderBtn"
+            type="button"
+            class="px-4 py-2 rounded-lg bg-[#1a73e8] hover:bg-[#1765cc] text-white text-xs sm:text-sm font-medium transition cursor-pointer"
+          >
+            Return to Search
+          </button>
+        </div>
+        <h2 id="readerTitle" class="text-2xl sm:text-3xl font-bold text-[#202124]"></h2>
+        <pre
+          id="readerBody"
+          class="whitespace-pre-wrap font-mono text-xs sm:text-sm leading-relaxed text-[#202124] bg-[#f8f9fa] p-5 rounded-2xl border border-[#dadce0]"
+        ></pre>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      'use strict';
+
+      const API_KEY_STORAGE_KEY = 'dogsearch_gemini_api_key_v1';
+
+      const WORLD_LANDMARKS = [
+        { name: 'Eiffel Tower, Paris', region: 'Europe', query: 'Eiffel Tower Paris France', url: 'https://www.google.com/maps/search/?api=1&query=Eiffel+Tower+Paris+France' },
+        { name: 'Mount Fuji, Honshu', region: 'Asia', query: 'Mount Fuji Japan', url: 'https://www.google.com/maps/search/?api=1&query=Mount+Fuji+Japan' },
+        { name: 'Sydney Opera House', region: 'Oceania', query: 'Sydney Opera House Australia', url: 'https://www.google.com/maps/search/?api=1&query=Sydney+Opera+House+Australia' },
+        { name: 'Machu Picchu, Cusco', region: 'South America', query: 'Machu Picchu Peru', url: 'https://www.google.com/maps/search/?api=1&query=Machu+Picchu+Peru' },
+        { name: 'Grand Canyon, Arizona', region: 'North America', query: 'Grand Canyon National Park USA', url: 'https://www.google.com/maps/search/?api=1&query=Grand+Canyon+National+Park+USA' },
+        { name: 'Table Mountain, Cape Town', region: 'Africa', query: 'Table Mountain Cape Town South Africa', url: 'https://www.google.com/maps/search/?api=1&query=Table+Mountain+Cape+Town+South+Africa' }
+      ];
+
+      const DATABASE_DOMAINS = [
+        { domain: 'archive.dogsearch.org', category: 'Encyclopedia', externalUrl: '' },
+        { domain: 'atlas.dogsearch.org', category: 'World Atlas', externalUrl: 'https://www.openstreetmap.org' },
+        { domain: 'docs.dogsearch.org', category: 'Reference', externalUrl: '' },
+        { domain: 'fieldnotes.dogsearch.org', category: 'Research Index', externalUrl: 'https://www.wikipedia.org' },
+        { domain: 'catalog.dogsearch.org', category: 'Data Archive', externalUrl: '' }
+      ];
+
+      const TRENDING_TOPICS = [
+        'capital of France',
+        'world geography',
+        'space exploration',
+        'ocean ecosystems',
+        'ancient civilizations',
+        'renewable energy'
+      ];
+
+      const state = {
+        view: 'start', // 'start' | 'results' | 'fullAi'
+        activeTab: 'ai', // 'ai' | 'all' | 'maps'
+        query: '',
+        page: 0,
+        items: [],
+        aiAnswer: '',
+        aiLoading: false,
+        fullAiMessages: [
+          {
+            role: 'model',
+            text: 'Welcome to Dog AI! Ask me anything—works with a Gemini API key in standalone mode and includes a built-in fallback if no key is set.'
+          }
+        ]
+      };
+
+      const els = {
+        brandHomeBtn: document.getElementById('brandHomeBtn'),
+        openDogAiTopBtn: document.getElementById('openDogAiTopBtn'),
+        openMapsTopBtn: document.getElementById('openMapsTopBtn'),
+        startMenuView: document.getElementById('startMenuView'),
+        resultsView: document.getElementById('resultsView'),
+        fullDogAiView: document.getElementById('fullDogAiView'),
+        homeSearchForm: document.getElementById('homeSearchForm'),
+        homeSearchInput: document.getElementById('homeSearchInput'),
+        resultsSearchForm: document.getElementById('resultsSearchForm'),
+        resultsSearchInput: document.getElementById('resultsSearchInput'),
+        startDogAiBtn: document.getElementById('startDogAiBtn'),
+        feelingLuckyBtn: document.getElementById('feelingLuckyBtn'),
+        homeTrendingChips: document.getElementById('homeTrendingChips'),
+        tabDogAi: document.getElementById('tabDogAi'),
+        tabAll: document.getElementById('tabAll'),
+        tabMaps: document.getElementById('tabMaps'),
+        dogAiAnswerCard: document.getElementById('dogAiAnswerCard'),
+        dogAiProtocolLabel: document.getElementById('dogAiProtocolLabel'),
+        dogAiLoading: document.getElementById('dogAiLoading'),
+        dogAiAnswerText: document.getElementById('dogAiAnswerText'),
+        openDogAiFullFromCardBtn: document.getElementById('openDogAiFullFromCardBtn'),
+        readAiInReaderBtn: document.getElementById('readAiInReaderBtn'),
+        worldMapsPanel: document.getElementById('worldMapsPanel'),
+        mapsSubtitle: document.getElementById('mapsSubtitle'),
+        externalGoogleMapsLink: document.getElementById('externalGoogleMapsLink'),
+        googleMapsIframe: document.getElementById('googleMapsIframe'),
+        worldLandmarksGrid: document.getElementById('worldLandmarksGrid'),
+        databaseResultsSection: document.getElementById('databaseResultsSection'),
+        resultsMetaLabel: document.getElementById('resultsMetaLabel'),
+        resultsList: document.getElementById('resultsList'),
+        loadMoreResultsBtn: document.getElementById('loadMoreResultsBtn'),
+        infiniteScrollSentinel: document.getElementById('infiniteScrollSentinel'),
+        standaloneApiKeyInput: document.getElementById('standaloneApiKeyInput'),
+        backToSearchFromAiBtn: document.getElementById('backToSearchFromAiBtn'),
+        fullAiChatLog: document.getElementById('fullAiChatLog'),
+        fullAiForm: document.getElementById('fullAiForm'),
+        fullAiPromptInput: document.getElementById('fullAiPromptInput'),
+        plaintextReaderOverlay: document.getElementById('plaintextReaderOverlay'),
+        readerUriBadge: document.getElementById('readerUriBadge'),
+        readerTitle: document.getElementById('readerTitle'),
+        readerBody: document.getElementById('readerBody'),
+        closeReaderBtn: document.getElementById('closeReaderBtn')
+      };
+
+      function toSlug(text) {
+        return String(text || 'item')
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/^-+|-+$/g, '') || 'item';
+      }
+
+      function getApiKey() {
+        try {
+          const typed = els.standaloneApiKeyInput && els.standaloneApiKeyInput.value
+            ? els.standaloneApiKeyInput.value.trim()
+            : '';
+          if (typed) {
+            localStorage.setItem(API_KEY_STORAGE_KEY, typed);
+            return typed;
+          }
+          const saved = localStorage.getItem(API_KEY_STORAGE_KEY) || '';
+          if (saved && els.standaloneApiKeyInput && !els.standaloneApiKeyInput.value) {
+            els.standaloneApiKeyInput.value = saved;
+          }
+          return saved;
+        } catch (_err) {
+          return '';
+        }
+      }
+
+      function getRuntimeContextInstruction(baseInstruction) {
+        const now = new Date();
+        let tz = 'UTC';
+        try {
+          tz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+        } catch (_e) {
+          tz = 'UTC';
+        }
+        const localDateTime = now.toLocaleString('en-US', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: 'numeric',
+          minute: '2-digit',
+          second: '2-digit',
+          timeZoneName: 'short'
+        });
+        const utcDateTime = now.toUTCString();
+        return `${baseInstruction} Current user local date/time: ${localDateTime} (Timezone: ${tz}). Current UTC time: ${utcDateTime}. Current year: ${now.getFullYear()}. Always use this exact real-time date, year, and local timezone when answering questions about the current time, date, or year.`;
+      }
+
+      function formatMessageHtml(text, isUserBubble) {
+        const escaped = escapeHtml(text || '');
+        if (isUserBubble) {
+          return escaped;
+        }
+        return escaped
+          .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+          .replace(/`([^`]+)`/g, '<code class="px-1 py-0.5 rounded bg-[#f1f3f4] font-mono text-xs">$1</code>');
+      }
+
+      function buildFallbackAnswer(prompt) {
+        const clean = String(prompt || '').trim();
+        const now = new Date();
+        if (/what\s+year|current\s+year/i.test(clean)) {
+          return `The current year is **${now.getFullYear()}**.`;
+        }
+        if (/what\s+time|current\s+time/i.test(clean)) {
+          const localTime = now.toLocaleTimeString('en-US', {
+            hour: 'numeric',
+            minute: '2-digit',
+            timeZoneName: 'short'
+          });
+          return `The current local time is **${localTime}**.`;
+        }
+        if (/what\s+date|today'?s\s+date|current\s+date/i.test(clean)) {
+          const localDate = now.toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          });
+          return `Today's date is **${localDate}**.`;
+        }
+        if (/capital\s+of\s+france/i.test(clean)) {
+          return 'The capital of France is **Paris**.';
+        }
+        return [
+          `Dog AI Summary for "${clean}":`,
+          `• Overview: Indexed across DogSearch databases and worldwide map references for "${clean}".`,
+          `• Standalone Note: No Gemini API key is configured in local storage right now. Paste a Gemini API key in the Full Dog AI top bar for live AI responses, or open any result below in dogsearch://read:.`
+        ].join('\n');
+      }
+
+      async function callGeminiText(contentsPayload, systemInstructionText) {
+        const apiKey = getApiKey();
+        if (!apiKey) {
+          return null;
+        }
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${encodeURIComponent(apiKey)}`;
+        const body = {
+          contents: contentsPayload,
+          systemInstruction: {
+            parts: [{ text: getRuntimeContextInstruction(systemInstructionText) }]
+          }
+        };
+
+        const maxRetries = 2;
+        for (let attempt = 0; attempt <= maxRetries; attempt++) {
+          try {
+            const resp = await fetch(url, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(body)
+            });
+            if (!resp.ok) {
+              throw new Error(`HTTP ${resp.status}`);
+            }
+            const json = await resp.json();
+            const text = json?.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (typeof text === 'string' && text.trim()) {
+              return text.trim();
+            }
+            throw new Error('Empty response');
+          } catch (_err) {
+            if (attempt === maxRetries) {
+              return null;
+            }
+            await new Promise((r) => setTimeout(r, 500 * Math.pow(2, attempt)));
+          }
+        }
+        return null;
+      }
+
+      function generateDatabaseBatch(queryText, pageIndex) {
+        const batchSize = 8;
+        const startIdx = pageIndex * batchSize;
+        const created = [];
+
+        for (let i = 0; i < batchSize; i++) {
+          const globalNum = startIdx + i + 1;
+          const src = DATABASE_DOMAINS[(startIdx + i) % DATABASE_DOMAINS.length];
+          const slug = `${toSlug(queryText)}-rec-${globalNum}`;
+          const title = `${queryText} — ${src.category} Entry #${globalNum}`;
+          const snippet = `Expanded database record #${globalNum} in ${src.category} covering "${queryText}", cross-referenced with worldwide geography and plaintext archive notes.`;
+          const fullText = [
+            `PROTOCOL: dogsearch://read:${slug}`,
+            `TITLE: ${title}`,
+            `SOURCE: ${src.domain} (${src.category})`,
+            `QUERY: ${queryText}`,
+            '',
+            snippet,
+            '',
+            `Record #${globalNum} provides structured reference notes, related search facets, and direct plaintext inspection without leaving DogSearch.`
+          ].join('\n');
+
+          created.push({
+            id: `${pageIndex}-${i}`,
+            title,
+            snippet,
+            sourceDomain: src.domain,
+            category: src.category,
+            externalUrl: src.externalUrl,
+            readUri: `dogsearch://read:${slug}`,
+            fullText
+          });
+        }
+        return created;
+      }
+
+      function renderResultsList() {
+        if (!els.resultsList) return;
+        els.resultsList.innerHTML = '';
+
+        state.items.forEach((item) => {
+          const card = document.createElement('article');
+          card.className = 'rounded-xl border border-[#dadce0] bg-white p-4 hover:border-[#bdc1c6] transition space-y-2';
+
+          const topLine = document.createElement('div');
+          topLine.className = 'flex flex-wrap items-center justify-between gap-2 text-xs text-[#5f6368]';
+          topLine.innerHTML = `<span>${escapeHtml(item.sourceDomain)} • ${escapeHtml(item.category)}</span><span class="font-mono">${escapeHtml(item.readUri)}</span>`;
+
+          const titleEl = document.createElement('h3');
+          titleEl.className = 'text-base sm:text-lg font-semibold text-[#1a73e8]';
+
+          if (item.externalUrl) {
+            const extLink = document.createElement('a');
+            extLink.href = item.externalUrl;
+            extLink.target = '_blank';
+            extLink.rel = 'noopener noreferrer';
+            extLink.textContent = `${item.title} ↗`;
+            extLink.className = 'hover:underline';
+            titleEl.appendChild(extLink);
+          } else {
+            const readBtn = document.createElement('button');
+            readBtn.type = 'button';
+            readBtn.textContent = item.title;
+            readBtn.className = 'text-left hover:underline cursor-pointer';
+            readBtn.addEventListener('click', () => openReader(item.title, item.readUri, item.fullText));
+            titleEl.appendChild(readBtn);
+          }
+
+          const snippetEl = document.createElement('p');
+          snippetEl.className = 'text-xs sm:text-sm text-[#3c4043] leading-relaxed';
+          snippetEl.textContent = item.snippet;
+
+          const actions = document.createElement('div');
+          actions.className = 'flex flex-wrap items-center gap-3 pt-1 text-xs';
+
+          const readerTrigger = document.createElement('button');
+          readerTrigger.type = 'button';
+          readerTrigger.textContent = 'Read in dogsearch://read:';
+          readerTrigger.className = 'text-[#1967d2] font-medium hover:underline cursor-pointer';
+          readerTrigger.addEventListener('click', () => openReader(item.title, item.readUri, item.fullText));
+          actions.appendChild(readerTrigger);
+
+          if (item.externalUrl) {
+            const newTabLink = document.createElement('a');
+            newTabLink.href = item.externalUrl;
+            newTabLink.target = '_blank';
+            newTabLink.rel = 'noopener noreferrer';
+            newTabLink.textContent = 'Open Website in New Tab ↗';
+            newTabLink.className = 'text-[#5f6368] hover:text-[#202124] hover:underline';
+            actions.appendChild(newTabLink);
+          }
+
+          card.appendChild(topLine);
+          card.appendChild(titleEl);
+          card.appendChild(snippetEl);
+          card.appendChild(actions);
+          els.resultsList.appendChild(card);
+        });
+
+        if (els.resultsMetaLabel) {
+          els.resultsMetaLabel.textContent = `Showing ${state.items.length} database entries for "${state.query}"`;
+        }
+      }
+
+      function renderWorldMaps() {
+        const mapQuery = state.query ? `${state.query} world map` : 'World';
+        if (els.mapsSubtitle) {
+          els.mapsSubtitle.textContent = `Worldwide Google Maps view for "${mapQuery}"`;
+        }
+        if (els.googleMapsIframe) {
+          els.googleMapsIframe.src = `https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&output=embed`;
+        }
+        if (els.externalGoogleMapsLink) {
+          els.externalGoogleMapsLink.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`;
+        }
+        if (!els.worldLandmarksGrid) return;
+
+        els.worldLandmarksGrid.innerHTML = '';
+        WORLD_LANDMARKS.forEach((loc) => {
+          const box = document.createElement('div');
+          box.className = 'rounded-xl border border-[#dadce0] bg-[#f8f9fa] p-3.5 flex flex-col justify-between gap-2';
+          box.innerHTML = `
+            <div>
+              <div class="text-[11px] font-medium text-[#5f6368]">${escapeHtml(loc.region)}</div>
+              <div class="text-sm font-semibold text-[#202124]">${escapeHtml(loc.name)}</div>
+            </div>
+            <div class="flex items-center justify-between gap-2 text-xs">
+              <a href="${escapeHtml(loc.url)}" target="_blank" rel="noopener noreferrer" class="text-[#1a73e8] font-medium hover:underline">Google Maps ↗</a>
+              <button type="button" class="text-[#5f6368] hover:text-[#202124] cursor-pointer">Read Note</button>
+            </div>
+          `;
+          const noteBtn = box.querySelector('button');
+          noteBtn?.addEventListener('click', () => {
+            openReader(
+              loc.name,
+              `dogsearch://read:map-${toSlug(loc.name)}`,
+              `WORLD MAP LOCATION\nPlace: ${loc.name}\nRegion: ${loc.region}\nMaps URL: ${loc.url}`
+            );
+          });
+          els.worldLandmarksGrid.appendChild(box);
+        });
+      }
+
+      function applyTabVisibility() {
+        const isAi = state.activeTab === 'ai';
+        const isAll = state.activeTab === 'all';
+        const isMaps = state.activeTab === 'maps';
+
+        setTabButtonStyle(els.tabDogAi, isAi);
+        setTabButtonStyle(els.tabAll, isAll);
+        setTabButtonStyle(els.tabMaps, isMaps);
+
+        els.dogAiAnswerCard?.classList.toggle('hidden', !isAi && !isAll);
+        els.worldMapsPanel?.classList.toggle('hidden', !isMaps && !isAll);
+        els.databaseResultsSection?.classList.toggle('hidden', !isAll && !isAi);
+      }
+
+      function setTabButtonStyle(btn, active) {
+        if (!btn) return;
+        if (active) {
+          btn.className = 'px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold bg-[#e8f0fe] text-[#1967d2] cursor-pointer';
+        } else {
+          btn.className = 'px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium text-[#5f6368] hover:bg-[#f1f3f4] cursor-pointer';
+        }
+      }
+
+      function switchView(nextView) {
+        state.view = nextView;
+        els.startMenuView?.classList.toggle('hidden', nextView !== 'start');
+        els.resultsView?.classList.toggle('hidden', nextView !== 'results');
+        els.fullDogAiView?.classList.toggle('hidden', nextView !== 'fullAi');
+        if (nextView === 'fullAi') {
+          renderFullAiConversation();
+        }
+      }
+
+      async function runSearch(rawQuery) {
+        const trimmed = String(rawQuery || '').trim();
+        if (!trimmed) return;
+
+        state.query = trimmed;
+        state.page = 0;
+        state.items = generateDatabaseBatch(trimmed, 0);
+        state.activeTab = 'ai';
+
+        if (els.homeSearchInput) els.homeSearchInput.value = trimmed;
+        if (els.resultsSearchInput) els.resultsSearchInput.value = trimmed;
+        if (els.dogAiProtocolLabel) {
+          els.dogAiProtocolLabel.textContent = `dogsearch://ai:${toSlug(trimmed)}`;
+        }
+
+        switchView('results');
+        applyTabVisibility();
+        renderResultsList();
+        renderWorldMaps();
+
+        state.aiLoading = true;
+        els.dogAiLoading?.classList.remove('hidden');
+        els.dogAiLoading?.classList.add('flex');
+        if (els.dogAiAnswerText) els.dogAiAnswerText.innerHTML = '';
+
+        const aiResult = await callGeminiText(
+          [{ role: 'user', parts: [{ text: trimmed }] }],
+          'You are Dog AI inside DogSearch. Give a clear, helpful, concise answer.'
+        );
+
+        state.aiLoading = false;
+        els.dogAiLoading?.classList.add('hidden');
+        els.dogAiLoading?.classList.remove('flex');
+        state.aiAnswer = aiResult || buildFallbackAnswer(trimmed);
+        if (els.dogAiAnswerText) {
+          els.dogAiAnswerText.innerHTML = formatMessageHtml(state.aiAnswer, false);
+        }
+      }
+
+      function appendMoreResults() {
+        if (state.view !== 'results' || !state.query) return;
+        state.page += 1;
+        const nextBatch = generateDatabaseBatch(state.query, state.page);
+        state.items = state.items.concat(nextBatch);
+        renderResultsList();
+      }
+
+      function renderFullAiConversation() {
+        if (!els.fullAiChatLog) return;
+        els.fullAiChatLog.innerHTML = '';
+
+        state.fullAiMessages.forEach((msg) => {
+          const isUser = msg.role === 'user';
+          const row = document.createElement('div');
+          row.className = `flex ${isUser ? 'justify-end' : 'justify-start'}`;
+
+          const bubble = document.createElement('div');
+          bubble.className = isUser
+            ? 'max-w-[85%] rounded-2xl bg-[#1a73e8] text-white px-4 py-2.5 text-sm whitespace-pre-line'
+            : 'max-w-[85%] rounded-2xl bg-white border border-[#dadce0] text-[#202124] px-4 py-2.5 text-sm whitespace-pre-line';
+          bubble.innerHTML = formatMessageHtml(msg.text, isUser);
+
+          row.appendChild(bubble);
+          els.fullAiChatLog.appendChild(row);
+        });
+
+        els.fullAiChatLog.scrollTop = els.fullAiChatLog.scrollHeight;
+      }
+
+      async function sendFullAiMessage(promptText) {
+        const trimmed = String(promptText || '').trim();
+        if (!trimmed) return;
+
+        state.fullAiMessages.push({ role: 'user', text: trimmed });
+        renderFullAiConversation();
+
+        const apiContents = state.fullAiMessages.map((m) => ({
+          role: m.role === 'user' ? 'user' : 'model',
+          parts: [{ text: m.text }]
+        }));
+
+        const reply = await callGeminiText(
+          apiContents,
+          'You are Dog AI in full-view mode. Be concise, accurate, and helpful.'
+        );
+
+        state.fullAiMessages.push({
+          role: 'model',
+          text: reply || buildFallbackAnswer(trimmed)
+        });
+        renderFullAiConversation();
+      }
+
+      function openReader(title, uri, bodyText) {
+        if (els.readerTitle) els.readerTitle.textContent = title || 'DogSearch Plaintext';
+        if (els.readerUriBadge) els.readerUriBadge.textContent = uri || 'dogsearch://read:document';
+        if (els.readerBody) els.readerBody.textContent = String(bodyText || '').replace(/\*\*/g, '');
+        els.plaintextReaderOverlay?.classList.remove('hidden');
+        document.body.classList.add('reader-lock');
+      }
+
+      function closeReader() {
+        els.plaintextReaderOverlay?.classList.add('hidden');
+        document.body.classList.remove('reader-lock');
+      }
+
+      function escapeHtml(value) {
+        return String(value || '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      function renderTrendingChips() {
+        if (!els.homeTrendingChips) return;
+        els.homeTrendingChips.innerHTML = '';
+        TRENDING_TOPICS.forEach((topic) => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.textContent = topic;
+          btn.className = 'px-3 py-1 rounded-full bg-[#f8f9fa] hover:bg-[#f1f3f4] border border-[#dadce0] text-xs text-[#3c4043] cursor-pointer';
+          btn.addEventListener('click', () => runSearch(topic));
+          els.homeTrendingChips.appendChild(btn);
+        });
+      }
+
+      function bindEvents() {
+        els.brandHomeBtn?.addEventListener('click', () => switchView('start'));
+        els.openDogAiTopBtn?.addEventListener('click', () => switchView('fullAi'));
+        els.startDogAiBtn?.addEventListener('click', () => switchView('fullAi'));
+        els.openDogAiFullFromCardBtn?.addEventListener('click', () => switchView('fullAi'));
+        els.backToSearchFromAiBtn?.addEventListener('click', () => {
+          if (state.query) {
+            switchView('results');
+          } else {
+            switchView('start');
+          }
+        });
+
+        els.openMapsTopBtn?.addEventListener('click', () => {
+          if (!state.query) state.query = 'World';
+          state.activeTab = 'maps';
+          switchView('results');
+          applyTabVisibility();
+          renderWorldMaps();
+        });
+
+        els.feelingLuckyBtn?.addEventListener('click', () => {
+          if (!state.query) state.query = 'World';
+          state.activeTab = 'maps';
+          switchView('results');
+          applyTabVisibility();
+          renderWorldMaps();
+        });
+
+        els.homeSearchForm?.addEventListener('submit', (e) => {
+          e.preventDefault();
+          runSearch(els.homeSearchInput ? els.homeSearchInput.value : '');
+        });
+
+        els.resultsSearchForm?.addEventListener('submit', (e) => {
+          e.preventDefault();
+          runSearch(els.resultsSearchInput ? els.resultsSearchInput.value : '');
+        });
+
+        els.tabDogAi?.addEventListener('click', () => {
+          state.activeTab = 'ai';
+          applyTabVisibility();
+        });
+
+        els.tabAll?.addEventListener('click', () => {
+          state.activeTab = 'all';
+          applyTabVisibility();
+          renderWorldMaps();
+        });
+
+        els.tabMaps?.addEventListener('click', () => {
+          state.activeTab = 'maps';
+          applyTabVisibility();
+          renderWorldMaps();
+        });
+
+        els.readAiInReaderBtn?.addEventListener('click', () => {
+          const q = state.query || 'Dog AI';
+          openReader(
+            `Dog AI: ${q}`,
+            `dogsearch://read:ai-${toSlug(q)}`,
+            state.aiAnswer || buildFallbackAnswer(q)
+          );
+        });
+
+        els.loadMoreResultsBtn?.addEventListener('click', appendMoreResults);
+
+        els.fullAiForm?.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const val = els.fullAiPromptInput ? els.fullAiPromptInput.value : '';
+          if (els.fullAiPromptInput) els.fullAiPromptInput.value = '';
+          sendFullAiMessage(val);
+        });
+
+        els.standaloneApiKeyInput?.addEventListener('change', getApiKey);
+        els.closeReaderBtn?.addEventListener('click', closeReader);
+
+        if ('IntersectionObserver' in window && els.infiniteScrollSentinel) {
+          const observer = new IntersectionObserver(
+            (entries) => {
+              if (entries.some((entry) => entry.isIntersecting) && state.view === 'results') {
+                appendMoreResults();
+              }
+            },
+            { rootMargin: '120px' }
+          );
+          observer.observe(els.infiniteScrollSentinel);
+        }
+      }
+
+      window.addEventListener('DOMContentLoaded', () => {
+        try {
+          getApiKey();
+          renderTrendingChips();
+          bindEvents();
+          switchView('start');
+        } catch (err) {
+          document.body.innerHTML = `<div style="padding:24px;font-family:sans-serif;">DogSearch recovery error: ${escapeHtml(err && err.message ? err.message : 'Unknown error')}</div>`;
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
